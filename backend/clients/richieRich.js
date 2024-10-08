@@ -1,18 +1,31 @@
 const WebSocket = require("ws");
-const axios = require("axios");
+// const axios = require("axios");
 
 async function getRichieRichResponse(prompt) {
-  try {
-    const response = await axios.post(
-      "http://localhost:8082/v1/chat/completions",
-      {
-        prompt,
-      },
-    );
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
+
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket("ws://localhost:8082/v1/stream");
+
+    let response = "";
+
+    ws.on("open", () => {
+      ws.send(prompt);
+    });
+
+    ws.on("message", (data) => {
+      response += data.toString();
+    });
+
+    ws.on("close", () => {
+      resolve(response);
+    });
+
+    ws.on("error", (err) => {
+      reject(err);
+    });
+
+  });
+
 }
 
 module.exports = {

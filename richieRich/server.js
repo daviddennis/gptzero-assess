@@ -1,28 +1,17 @@
-const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
 const url = require("url");
 
 const {
-  getModelResponse,
   getModelResponseGenerator,
 } = require("./services/llmModel");
 
-const app = express();
-const server = http.createServer(app);
+const server = http.createServer();
 const wsServer = new WebSocket.Server({ noServer: true });
-app.use(express.json());
 const PORT = 8082;
-
-app.post("/v1/chat/completions", async (req, res) => {
-  const requestPrompt = req.body.prompt;
-  const response = await getModelResponse(requestPrompt);
-  res.send(response);
-});
 
 wsServer.on("connection", async (ws) => {
   ws.on("message", async (prompt) => {
-    console.log("Received prompt: ", prompt);
     const modelOutputGenerator = getModelResponseGenerator(prompt);
     let result = await modelOutputGenerator.next();
     while (!result.done) {
