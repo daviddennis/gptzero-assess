@@ -13,6 +13,7 @@
 4. `Scalability`
     - Load Balancing for requests
     - Dockerize LLM, BE, and FE services, and deploy with Kubernetes
+    - LLM model needs to be fleshed out, with scalable datastore options explored for saved conversations
 
 
 ## Unclear Instructions
